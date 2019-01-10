@@ -14,7 +14,7 @@ driver = webdriver.Chrome(executable_path='/Users/aayush/Documents/Work/Scraper/
 driver.get(base_url)
 #HTML_Content
 home_html = driver.page_source
-soup  = BeautifulSoup(home_html,'lxml',from_encoding='utf-8')
+soup  = BeautifulSoup(home_html,'lxml')
 # Get all the categories and their root URLS
 categories=[]
 hier=[]
@@ -29,7 +29,7 @@ driver.get(single_url)
 #HTML_Content
 single_html = driver.page_source
 # close connection
-page_soup = BeautifulSoup(single_html,'lxml',from_encoding='utf-8')
+page_soup = BeautifulSoup(single_html,'lxml')
 # print(page_soup)
 # Get the View All Link
 if page_soup.find('a',alt='View All',href=True):
@@ -44,5 +44,15 @@ else:
 all_link = base_url+ all_link_soup['href']
 driver.get(all_link)
 # HTML Content of Products Listing Page
-all_products_html = driver.page_source
-print(all_products_html)
+try:
+    element = WebDriverWait(driver,10).until(
+        EC.presence_of_all_elements_located((By.ID, "ajaxLoaded"))
+    )
+except:
+    print("Nope")
+    driver.quit()
+
+product = driver.find_element_by_xpath('//*[@id="scroll-after-filter-apply"]/div[2]/section/div/ul').text
+print(product)
+# product_soup= BeautifulSoup(product,'lxml')
+# print(product_soup)
